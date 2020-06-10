@@ -122,6 +122,7 @@ jobs:
       sdkurl: $(WindowsRTCSDK)
       architecture: 'x86'
       ReleasePath: 'Release'
+      
   - template: cicd/templates/build-Windows-qt.yml
     parameters:
       displayName: 'WindowsOpenVideoCall64'
@@ -130,3 +131,4 @@ jobs:
       sdkurl: $(WindowsRTCSDK)
       architecture: 'x64'
       ReleasePath: 'Release'
+      
