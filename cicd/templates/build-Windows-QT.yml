@@ -8,21 +8,23 @@ parameters:
   workingDirectory: ''
   scheme: ''
   sdkurl: ''
-  solutionName: ''
-  sdkunzipPath: ''
+  architecture: ''
+  ReleasePath: ''
+  QtDir: ''
 jobs:
   - job: ${{ parameters.displayName }}Build
     displayName: ${{ parameters.displayName }}
 
-    pool: 'Default'
+    pool:
+      vmImage: 'vs2017-win2016'
 
     variables:
-      solution: '${{ parameters.workingDirectory }}/${{ parameters.solutionName }}'
-      buildPlatform: 'win32'
+      buildPlatform: ${{ parameters.Machine }}
       buildConfiguration: 'Release'
-      
+      sdkpathname: 'libs'
+      sdkunzipPath: 'AgoraSDK/Agora_Native_SDK_for_Windows_FULL'
     steps:
-      - script: echo "${{ parameters.sdkurl }}"
+      - script: echo "${{ parameters.sdkurl }}" && ls
       - powershell: cicd/scripts/downloadsdk.ps1 "${{ parameters.sdkurl }}"
    
       - task: ExtractFiles@1
@@ -32,22 +34,29 @@ jobs:
           
       - task: CopyFiles@2
         inputs:
-          sourceFolder: ${{ parameters.sdkunzipPath }}/sdk
-          targetFolder: ${{ parameters.workingDirectory }}/sdk
+          sourceFolder: $(sdkunzipPath)/$(sdkpathname)
+          targetFolder: ${{ parameters.workingDirectory }}/$(sdkpathname)
+      - script: cd ${{ parameters.workingDirectory }}/ && ls
+              
+      - script: cicd/scripts/install-qt-win.cmd ${{ parameters.architecture }}
+        displayName: 'Install QT'
+    
+      - script: call ${{ parameters.workingDirectory }}/build_azure_release.bat 3.0.1 ${{ parameters.architecture }}
+        displayName: 'build OpenVideoCall-Windows'
 
-      - script: cd ${{ parameters.workingDirectory }} 
-      - script: ${{ parameters.workingDirectory }}/build_azure_pipeline.bat ${{ parameters.workingDirectory }}
-      - script: ls 
       - script: cd ${{ parameters.workingDirectory }} && ls
 
       - task: ArchiveFiles@2
         inputs:
-          rootFolderOrFile: '${{ parameters.workingDirectory }}/Win32/Release/'
+          rootFolderOrFile: '${{ parameters.workingDirectory }}/${{ parameters.ReleasePath }}/'
           includeRootFolder: true 
           archiveType: 'zip'
           archiveFile: ${{ parameters.workingDirectory }}/${{ parameters.displayName }}.zip
           replaceExistingArchive: true
-
+          
+      - script: ls 
+      - script: cd ${{ parameters.workingDirectory }} && ls
+      
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: ${{ parameters.workingDirectory }}/${{ parameters.displayName }}.zip

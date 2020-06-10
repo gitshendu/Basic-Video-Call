@@ -113,3 +113,20 @@ jobs:
       Machine: 'x64'
       architecture: 'x64'
       ReleasePath: 'x64/Release'
+#Windows QT
+- template: cicd/templates/build-Windows-qt.yml
+  parameters:
+    displayName: 'WindowsOpenVideoCall'
+    workingDirectory: 'Group-Video/OpenLive-Windows'
+    scheme: 'OpenVideoCall-Windows'
+    sdkurl: $(WindowsRTCSDK)
+    architecture: 'x86'
+    ReleasePath: 'Release'
+- template: cicd/templates/build-Windows-qt.yml
+  parameters:
+    displayName: 'WindowsOpenVideoCall64'
+    workingDirectory: 'Group-Video/OpenVideoCall-Windows'
+    scheme: 'OpenVideoCall-Windows'
+    sdkurl: $(WindowsRTCSDK)
+    architecture: 'x64'
+    ReleasePath: 'Release'
