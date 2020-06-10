@@ -117,7 +117,7 @@ jobs:
   - template: cicd/templates/build-Windows-qt.yml
     parameters:
       displayName: 'WindowsOpenVideoCall'
-      workingDirectory: 'Group-Video/OpenLive-Windows'
+      workingDirectory: 'Group-Video/OpenVideoCall-Windows'
       scheme: 'OpenVideoCall-Windows'
       sdkurl: $(WindowsRTCSDK)
       architecture: 'x86'

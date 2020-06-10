@@ -358,3 +358,4 @@ libs/
 Makefile
 Makefile.Release
 Makefile.Debug
+.qmake.stash
